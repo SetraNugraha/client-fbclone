@@ -36,7 +36,6 @@ export const AuthContextProvider = ({ children }) => {
   const axiosJWT = useAxiosJWT(baseURL, expired, setAuthUser, setToken, setExpired)
 
   const handleLogin = async (email, password, setMsg) => {
-    const baseURL = import.meta.env.VITE_BASE_URL
     setLoginLoading(true)
     try {
       const response = await axios.post(`${baseURL}/api/login`, {
@@ -58,7 +57,6 @@ export const AuthContextProvider = ({ children }) => {
   }
 
   const handleLogout = async () => {
-    const baseURL = import.meta.env.VITE_BASE_URL
     setLogoutLoading(true)
     try {
       await axios.delete(`${baseURL}/api/logout`)
