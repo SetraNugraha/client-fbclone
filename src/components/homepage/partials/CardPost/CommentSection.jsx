@@ -207,7 +207,7 @@ export const CommentSection = ({ post, userId, refetchAllPosts }) => {
               onChange={formik.handleChange}
               value={formik.values.body}
               className="h-[95%] w-full rounded-2xl bg-slate-100 px-5 placeholder:text-slate-600 placeholder:text-lg disabled:cursor-not-allowed"
-              placeholder={createCommentMutation.isLoading ? 'Proses Mengirim Komentar ....' : 'Tulsi Komentar ....'}
+              placeholder={createCommentMutation.isLoading ? 'Proses Mengirim Komentar ....' : 'Tulis Komentar ....'}
             />
 
             <button
