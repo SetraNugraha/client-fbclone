@@ -3,121 +3,129 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { FaVideo, BsFileImage, CgSmileMouthOpen, MdOutlineDisabledByDefault } from '../../assets/icons'
+import {
+  FaVideo,
+  BsFileImage,
+  CgSmileMouthOpen,
+  MdOutlineDisabledByDefault,
+} from "../../assets/icons";
 
-import { Link } from 'react-router-dom'
-import { useRef, useState } from 'react'
-import { useFormik } from 'formik'
-import Modal from '../../elements/Modal'
-import { Addons } from './partials/CreatePost/Addons'
-import { Header } from './partials/CreatePost/Header'
-import { useAuth } from '../../features/auth/useAuth'
-import { usePostAction } from '../../features/posts/usePostAction'
+import { Link } from "react-router-dom";
+import { useRef, useState } from "react";
+import { useFormik } from "formik";
+import Modal from "../../elements/Modal";
+import { Addons } from "./partials/CreatePost/Addons";
+import { Header } from "./partials/CreatePost/Header";
+import { useAuth } from "../../features/auth/useAuth";
+import { usePostAction } from "../../features/posts/usePostAction";
 
 // Upload Post Component
 const UploadPost = ({ btnName, Icon, IconColor }) => {
   return (
     <>
       <li className="hover:bg-slate-200 hover:rounded-xl flex items-center justify-center w-1/3 py-3">
-        <a
-          href="#"
-          className="flex gap-2 justify-center items-center"
-        >
-          {Icon ? <Icon className={`h-[25px] w-[25px] ${IconColor}`} /> : <MdOutlineDisabledByDefault className="h-[25px] w-[25px] text-slate-500" />}
+        <a href="#" className="flex gap-2 justify-center items-center">
+          {Icon ? (
+            <Icon className={`h-[25px] w-[25px] ${IconColor}`} />
+          ) : (
+            <MdOutlineDisabledByDefault className="h-[25px] w-[25px] text-slate-500" />
+          )}
           <p className="font-semibold text-sm text-slate-500">{btnName}</p>
         </a>
       </li>
     </>
-  )
-}
+  );
+};
 
 export default function CreatePost({ userId }) {
-  const { authUser } = useAuth()
-  const { useCreatePost, useFetchPosts } = usePostAction()
-  const { refetch: refetchAllPosts } = useFetchPosts()
-  const { refetch: refetchPostsByUserId } = useFetchPosts(userId)
-  const textAreaRef = useRef(null)
-  const [fileImgPost, setFileImgPost] = useState(null)
-  const profileImageURL = import.meta.env.VITE_URL_PROFILE_IMAGE
-  const urlImage = authUser.profile_image ? `${profileImageURL}/${authUser.profile_image}` : '/img/profile-default.jpg'
+  const { authUser } = useAuth();
+  const { useCreatePost, useFetchPosts } = usePostAction();
+  const { refetch: refetchAllPosts } = useFetchPosts();
+  const { refetch: refetchPostsByUserId } = useFetchPosts(userId);
+  const textAreaRef = useRef(null);
+  const [fileImgPost, setFileImgPost] = useState(null);
+  const profileImageURL = import.meta.env.VITE_URL_PROFILE_IMAGE;
+  const urlImage = authUser.profile_image
+    ? `${profileImageURL}/${authUser.profile_image}`
+    : "/img/profile-default.jpg";
 
   const [modalCreatePost, setModalCreatePost] = useState(() => {
-    const getModalCreatePost = localStorage.getItem('modalCreatePost')
-    return getModalCreatePost ? JSON.parse(getModalCreatePost) : false
-  })
+    const getModalCreatePost = localStorage.getItem("modalCreatePost");
+    return getModalCreatePost ? JSON.parse(getModalCreatePost) : false;
+  });
 
   const handleModalCreatePost = () => {
-    setModalCreatePost(true)
+    setModalCreatePost(true);
     setTimeout(() => {
-      textAreaRef.current.focus()
-    }, 0)
-  }
+      textAreaRef.current.focus();
+    }, 0);
+  };
 
   const handleUploadImgPost = (event) => {
-    const file = event.target.files[0]
+    const file = event.target.files[0];
     if (file) {
       // file type
-      if (!['image/jpg', 'image/jpeg', 'image/png'].includes(file.type)) {
-        alert('Invlaid file type, please select a jpg, jpeg, or png image')
-        return
+      if (!["image/jpg", "image/jpeg", "image/png"].includes(file.type)) {
+        alert("Invlaid file type, please select a jpg, jpeg, or png image");
+        return;
       }
 
       // max size 5MB
       if (file.size > 5 * 1024 * 1024) {
-        alert('File size must be < 5MB')
-        return
+        alert("File size must be < 5MB");
+        return;
       }
 
-      formik.setFieldValue('post_image', file)
-      setFileImgPost(file.name)
+      formik.setFieldValue("post_image", file);
+      setFileImgPost(file.name);
     }
-  }
+  };
 
   const handleRemoveFileImgPost = () => {
-    formik.setFieldValue('post_image', null)
-    setFileImgPost(null)
-    document.getElementById('uploadImgPost').value = null
-  }
+    formik.setFieldValue("post_image", null);
+    setFileImgPost(null);
+    document.getElementById("uploadImgPost").value = null;
+  };
 
   const formik = useFormik({
     initialValues: {
-      user_id: '',
-      body: '',
+      user_id: "",
+      body: "",
       post_image: null,
     },
     onSubmit: (values, { resetForm }) => {
-      const formData = new FormData()
-      formData.append('user_id', parseInt(authUser.id))
-      formData.append('body', values.body)
+      const formData = new FormData();
+      formData.append("user_id", parseInt(authUser.id));
+      formData.append("body", values.body);
 
       if (values.post_image) {
-        formData.append('post_image', values.post_image)
+        formData.append("post_image", values.post_image);
       }
 
-      createPostMutation.mutate(formData)
-      resetForm()
+      createPostMutation.mutate(formData);
+      resetForm();
     },
-  })
+  });
 
   const createPostMutation = useCreatePost({
     onSuccess: () => {
-      refetchAllPosts()
-      refetchPostsByUserId()
-      setFileImgPost(null)
-      alert('Post Successfuly Created.')
-      setModalCreatePost(false)
+      refetchAllPosts();
+      refetchPostsByUserId();
+      setFileImgPost(null);
+      alert("Post Successfuly Created.");
+      setModalCreatePost(false);
     },
     onError: () => {
-      alert('Error While Creating Post !')
-      setFileImgPost(null)
-      setModalCreatePost(false)
+      alert("Error While Creating Post !");
+      setFileImgPost(null);
+      setModalCreatePost(false);
     },
-  })
+  });
 
   const handleFormInput = (event) => {
-    const { name, value } = event.target
-    formik.setFieldValue(name, value)
-  }
+    const { name, value } = event.target;
+    formik.setFieldValue(name, value);
+  };
 
   // Text Post Component
   const TextPost = () => {
@@ -138,8 +146,8 @@ export default function CreatePost({ userId }) {
           placeholder={`Apa yang Anda pikirkan, ${authUser.first_name}?`}
         />
       </>
-    )
-  }
+    );
+  };
 
   return (
     <>
@@ -182,7 +190,9 @@ export default function CreatePost({ userId }) {
                 {/* File Upload Name */}
                 {fileImgPost && (
                   <div className=" mb-2 ml-1 flex gap-x-2 items-center">
-                    <p className="font-semibold text-xs text-slate-700 bg-slate-300 px-2 py-1 inline-block rounded-md">{fileImgPost}</p>
+                    <p className="font-semibold text-xs text-slate-700 bg-slate-300 px-2 py-1 inline-block rounded-md">
+                      {fileImgPost}
+                    </p>
 
                     {/* Button Remove File Image */}
                     <button
@@ -211,7 +221,10 @@ export default function CreatePost({ userId }) {
                     </button>
                   ) : (
                     <button
-                      disabled={formik.values.body.length === 0 && !formik.values.post_image}
+                      disabled={
+                        formik.values.body.length === 0 &&
+                        !formik.values.post_image
+                      }
                       type="submit"
                       className="py-1 disabled:cursor-not-allowed disabled:bg-slate-400 bg-blue-500 text-white font-semibold w-full my-3 rounded-lg text-lg hover:bg-opacity-70"
                     >
@@ -229,24 +242,24 @@ export default function CreatePost({ userId }) {
         <div className="rounded-b-lg px-5 py-2">
           <ul className="flex items-center justify-around h-full px-2">
             <UploadPost
-              btnName={'Video Siaran Langsung'}
+              btnName={"Video Siaran Langsung"}
               Icon={FaVideo}
-              IconColor={'text-red-400'}
+              IconColor={"text-red-400"}
             />
             <UploadPost
-              btnName={'Foto/Video'}
+              btnName={"Foto/Video"}
               Icon={BsFileImage}
-              IconColor={'text-green-400'}
+              IconColor={"text-green-400"}
             />
             <UploadPost
-              btnName={'Perasaan/aktivitas'}
+              btnName={"Perasaan/aktivitas"}
               Icon={CgSmileMouthOpen}
-              IconColor={'text-orange-400'}
+              IconColor={"text-orange-400"}
             />
           </ul>
         </div>
         {/* End Button Post */}
       </div>
     </>
-  )
+  );
 }

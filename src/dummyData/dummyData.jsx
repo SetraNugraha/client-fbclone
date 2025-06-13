@@ -1,6 +1,6 @@
 export const friends = [
   {
-    name: 'Ini dan seterusnya hanya dummy data',
+    name: 'lil lil lil lilnas',
     profile_image: null,
   },
 

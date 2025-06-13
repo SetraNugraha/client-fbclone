@@ -11,25 +11,6 @@ export default function Login() {
   return (
     <>
       <div className="bg-slate-100 h-dvh w-full">
-        <div className="w-[400px] fixed top-7 left-10 p-5 bg-white rounded-xl border border-slate-200 shadow-xl shadow-gray-300">
-          <h1 className="font-semibold">
-            Dibuat oleh{' '}
-            <span className="text-blue-500">
-              <a
-                href="https://porttra.vercel.app"
-                target="_blank"
-                rel="noreferrer"
-                className="hover:underline"
-              >
-                Setra{' '}
-              </a>
-            </span>
-            hanya untuk tujuan pembelajaran dan pengembangan skill coding.
-          </h1>
-          <ul className="list-disc ml-5">
-            <li>Upload image masih dalam pengembangan</li>
-          </ul>
-        </div>
         <div className="w-[50%] mx-auto h-[75%] flex justify-between items-center">
           {/* Title */}
           <div className="mr-[100px]">
