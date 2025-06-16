@@ -8,7 +8,7 @@ export const Header = ({ authUser }) => {
   const URL_PORFILE_IMAGE = import.meta.env.VITE_URL_PROFILE_IMAGE;
   const urlProfileImageUserLogin = profileImage
     ? `${URL_PORFILE_IMAGE}/${profileImage}`
-    : "img/profile-default.jpg";
+    : "/img/profile-default.jpg";
   return (
     <div className="flex gap-x-3 items-center mt-3">
       <img
