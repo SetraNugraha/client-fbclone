@@ -1,0 +1,15 @@
+export const objectToFormData = (fields) => {
+  const formData = new FormData();
+
+  Object.entries(fields).forEach(([key, value]) => {
+    if (value !== undefined || value !== "") {
+      if (typeof value === "string" || typeof value === "number") {
+        formData.append(key, value.toString().trim());
+      } else if (value instanceof File) {
+        formData.append(value);
+      }
+    }
+  });
+
+  return formData;
+};

@@ -1,32 +1,32 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import Navbar from '../components/homepage/Navbar'
-import { HeaderProfile } from '../components/profile/HeaderProfile'
-import { LeftContent } from '../components/profile/LeftContent'
-import { RightContent } from '../components/profile/RightContent'
-import { usePostAction } from '../features/posts/usePostAction'
-import CardPost from '../components/homepage/CardPost'
-import { useParams } from 'react-router-dom'
-import { useFetchUserById } from '../features/users/useFetchUserById'
-import { useAuth } from '../features/auth/useAuth'
-import Modal from '../elements/Modal'
+import Navbar from "../components/homepage/Navbar";
+import { HeaderProfile } from "../components/profile/HeaderProfile";
+import { LeftContent } from "../components/profile/LeftContent";
+import { RightContent } from "../components/profile/RightContent";
+import { usePostAction } from "../features/posts/usePosts";
+import CardPost from "../components/homepage/CardPost";
+import { useParams } from "react-router-dom";
+import { useFetchUserById } from "../features/users/useFetchUserById";
+import { useAuth } from "../features/auth/useAuth";
+import Modal from "../elements/Modal";
 
 export default function Profile() {
-  const { authUser, logoutLoading } = useAuth()
-  const { useFetchPosts } = usePostAction()
-  const { userId } = useParams()
+  const { authUser, logoutLoading } = useAuth();
+  const { useFetchPosts } = usePostAction();
+  const { userId } = useParams();
 
   // Posts
-  const { data: posts, isLoading, refetch: refetchAllPostsByUserId } = useFetchPosts(userId)
+  const { data: posts, isLoading, refetch: refetchAllPostsByUserId } = useFetchPosts(userId);
 
   // Data User, Using for header
-  const { data: userById, isLoading: loadingUserById } = useFetchUserById(userId)
+  const { data: userById, isLoading: loadingUserById } = useFetchUserById(userId);
 
-  const isOwnProfile = authUser.id == userId
+  const isOwnProfile = authUser.id == userId;
 
   if (loadingUserById) {
-    return <p className=" mt-7 text-center text-slate-400 font-semibold">Loading User Profile</p>
+    return <p className=" mt-7 text-center text-slate-400 font-semibold">Loading User Profile</p>;
   }
 
   return (
@@ -62,11 +62,7 @@ export default function Profile() {
                 {isLoading ? (
                   <p className=" mt-7 text-center text-slate-400 font-semibold">Loading ...</p>
                 ) : (
-                  <CardPost
-                    userId={userId}
-                    posts={posts}
-                    refetchAllPosts={refetchAllPostsByUserId}
-                  />
+                  <CardPost userId={userId} posts={posts} refetchAllPosts={refetchAllPostsByUserId} />
                 )}
               </div>
             </div>
@@ -82,5 +78,5 @@ export default function Profile() {
         )}
       </div>
     </>
-  )
+  );
 }

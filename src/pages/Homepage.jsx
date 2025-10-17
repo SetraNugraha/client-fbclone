@@ -1,20 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import '../index.css'
-import Navbar from '../components/homepage/Navbar'
-import Leftbar from '../components/homepage/Leftbar'
-import Reels from '../components/homepage/Reels'
-import CreatePost from '../components/homepage/CreatePost'
-import Rightbar from '../components/homepage/Rightbar'
-import CardPost from '../components/homepage/CardPost'
-import { useAuth } from '../features/auth/useAuth'
-import { usePostAction } from '../features/posts/usePostAction'
-import Modal from '../elements/Modal'
+import "../index.css";
+import Navbar from "../components/homepage/Navbar";
+import Leftbar from "../components/homepage/Leftbar";
+import Reels from "../components/homepage/Reels";
+import CreatePost from "../components/homepage/CreatePost";
+import Rightbar from "../components/homepage/Rightbar";
+import CardPost from "../components/homepage/CardPost";
+import { useAuth } from "../features/auth/useAuth";
+import { usePostAction } from "../features/posts/usePosts";
+import Modal from "../elements/Modal";
 
 export default function Homepage() {
-  const { authUser, logoutLoading } = useAuth()
-  const { useFetchPosts } = usePostAction()
-  const { data: posts, isLoading, refetch: refetchAllPosts } = useFetchPosts()
+  const { authUser, logoutLoading } = useAuth();
+  const { useFetchPosts } = usePostAction();
+  const { data: posts, isLoading, refetch: refetchAllPosts } = useFetchPosts();
 
   return (
     <>
@@ -38,11 +38,7 @@ export default function Homepage() {
             {isLoading ? (
               <p className=" mt-7 text-center text-slate-400 font-semibold">Loading ...</p>
             ) : (
-              <CardPost
-                userId={null}
-                posts={posts}
-                refetchAllPosts={refetchAllPosts}
-              />
+              <CardPost userId={null} posts={posts} refetchAllPosts={refetchAllPosts} />
             )}
           </div>
 
@@ -61,5 +57,5 @@ export default function Homepage() {
         )}
       </div>
     </>
-  )
+  );
 }

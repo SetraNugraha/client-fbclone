@@ -3,12 +3,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import {
-  FaVideo,
-  BsFileImage,
-  CgSmileMouthOpen,
-  MdOutlineDisabledByDefault,
-} from "../../assets/icons";
+import { FaVideo, BsFileImage, CgSmileMouthOpen, MdOutlineDisabledByDefault } from "../../assets/icons";
 
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
@@ -17,7 +12,7 @@ import Modal from "../../elements/Modal";
 import { Addons } from "./partials/CreatePost/Addons";
 import { Header } from "./partials/CreatePost/Header";
 import { useAuth } from "../../features/auth/useAuth";
-import { usePostAction } from "../../features/posts/usePostAction";
+import { usePostAction } from "../../features/posts/usePosts";
 
 // Upload Post Component
 const UploadPost = ({ btnName, Icon, IconColor }) => {
@@ -25,11 +20,7 @@ const UploadPost = ({ btnName, Icon, IconColor }) => {
     <>
       <li className="hover:bg-slate-200 hover:rounded-xl flex items-center justify-center w-1/3 py-3">
         <a href="#" className="flex gap-2 justify-center items-center">
-          {Icon ? (
-            <Icon className={`h-[25px] w-[25px] ${IconColor}`} />
-          ) : (
-            <MdOutlineDisabledByDefault className="h-[25px] w-[25px] text-slate-500" />
-          )}
+          {Icon ? <Icon className={`h-[25px] w-[25px] ${IconColor}`} /> : <MdOutlineDisabledByDefault className="h-[25px] w-[25px] text-slate-500" />}
           <p className="font-semibold text-sm text-slate-500">{btnName}</p>
         </a>
       </li>
@@ -45,9 +36,7 @@ export default function CreatePost({ userId }) {
   const textAreaRef = useRef(null);
   const [fileImgPost, setFileImgPost] = useState(null);
   const profileImageURL = import.meta.env.VITE_URL_PROFILE_IMAGE;
-  const urlImage = authUser.profile_image
-    ? `${profileImageURL}/${authUser.profile_image}`
-    : "/img/profile-default.jpg";
+  const urlImage = authUser.profile_image ? `${profileImageURL}/${authUser.profile_image}` : "/img/profile-default.jpg";
 
   const [modalCreatePost, setModalCreatePost] = useState(() => {
     const getModalCreatePost = localStorage.getItem("modalCreatePost");
@@ -132,11 +121,7 @@ export default function CreatePost({ userId }) {
     return (
       <>
         <Link to={`/profile/${authUser.id}`}>
-          <img
-            src={urlImage}
-            alt=""
-            className="w-[43px] h-[43px] rounded-full border border-slate-300"
-          />
+          <img src={urlImage} alt="" className="w-[43px] h-[43px] rounded-full border border-slate-300" />
         </Link>
         <input
           type="text"
@@ -161,11 +146,7 @@ export default function CreatePost({ userId }) {
         {/* Modal Create Post */}
         {modalCreatePost && (
           <Modal>
-            <Modal.Header
-              title="Create Post"
-              disabled={createPostMutation.isLoading}
-              onClick={() => setModalCreatePost(false)}
-            />
+            <Modal.Header title="Create Post" disabled={createPostMutation.isLoading} onClick={() => setModalCreatePost(false)} />
             <Modal.Body>
               {/* Body Profile */}
               <Header authUser={authUser} />
@@ -190,15 +171,10 @@ export default function CreatePost({ userId }) {
                 {/* File Upload Name */}
                 {fileImgPost && (
                   <div className=" mb-2 ml-1 flex gap-x-2 items-center">
-                    <p className="font-semibold text-xs text-slate-700 bg-slate-300 px-2 py-1 inline-block rounded-md">
-                      {fileImgPost}
-                    </p>
+                    <p className="font-semibold text-xs text-slate-700 bg-slate-300 px-2 py-1 inline-block rounded-md">{fileImgPost}</p>
 
                     {/* Button Remove File Image */}
-                    <button
-                      onClick={handleRemoveFileImgPost}
-                      className="text-red-500 font-semibold"
-                    >
+                    <button onClick={handleRemoveFileImgPost} className="text-red-500 font-semibold">
                       x
                     </button>
                   </div>
@@ -221,10 +197,7 @@ export default function CreatePost({ userId }) {
                     </button>
                   ) : (
                     <button
-                      disabled={
-                        formik.values.body.length === 0 &&
-                        !formik.values.post_image
-                      }
+                      disabled={formik.values.body.length === 0 && !formik.values.post_image}
                       type="submit"
                       className="py-1 disabled:cursor-not-allowed disabled:bg-slate-400 bg-blue-500 text-white font-semibold w-full my-3 rounded-lg text-lg hover:bg-opacity-70"
                     >
@@ -241,21 +214,9 @@ export default function CreatePost({ userId }) {
         {/* Button Post */}
         <div className="rounded-b-lg px-5 py-2">
           <ul className="flex items-center justify-around h-full px-2">
-            <UploadPost
-              btnName={"Video Siaran Langsung"}
-              Icon={FaVideo}
-              IconColor={"text-red-400"}
-            />
-            <UploadPost
-              btnName={"Foto/Video"}
-              Icon={BsFileImage}
-              IconColor={"text-green-400"}
-            />
-            <UploadPost
-              btnName={"Perasaan/aktivitas"}
-              Icon={CgSmileMouthOpen}
-              IconColor={"text-orange-400"}
-            />
+            <UploadPost btnName={"Video Siaran Langsung"} Icon={FaVideo} IconColor={"text-red-400"} />
+            <UploadPost btnName={"Foto/Video"} Icon={BsFileImage} IconColor={"text-green-400"} />
+            <UploadPost btnName={"Perasaan/aktivitas"} Icon={CgSmileMouthOpen} IconColor={"text-orange-400"} />
           </ul>
         </div>
         {/* End Button Post */}

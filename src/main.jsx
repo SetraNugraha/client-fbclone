@@ -1,39 +1,26 @@
 /* eslint-disable no-unused-vars */
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import './index.css'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import { AuthContextProvider } from './features/auth/AuthContext'
-import { PostContextProvider } from './features/posts/PostContext'
-import Login from '../src/pages/Login'
-import Homepage from '../src/pages/Homepage'
-import Profile from './pages/Profile'
-import axios from 'axios'
-import { QueryClient, QueryClientProvider } from 'react-query'
-import PrivateRoute from './features/auth/PrivateRoute'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { AuthContextProvider } from "./features/auth/AuthContext";
+import { PostContextProvider } from "./features/posts/PostContext";
+import Login from "../src/pages/Login";
+import Homepage from "../src/pages/Homepage";
+import Profile from "./pages/Profile";
+import { QueryClientProvider } from "react-query";
+import PrivateRoute from "./features/auth/PrivateRoute";
+import { queryClient } from "./lib/queryClient";
 
-axios.defaults.withCredentials = true
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchOnWindowFocus: false,
-    },
-  },
-})
-
-ReactDOM.createRoot(document.getElementById('root')).render(
+ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <BrowserRouter>
       <QueryClientProvider client={queryClient}>
         <AuthContextProvider>
           <Routes>
             {/* LOGIN */}
-            <Route
-              path="/"
-              element={<Login />}
-            />
+            <Route path="/" element={<Login />} />
             {/* END LOGIN */}
-
             {/* PRIVATE ROUTE */}
             <Route element={<PrivateRoute />}>
               <Route
@@ -58,5 +45,5 @@ ReactDOM.createRoot(document.getElementById('root')).render(
         </AuthContextProvider>
       </QueryClientProvider>
     </BrowserRouter>
-  </React.StrictMode>,
-)
+  </React.StrictMode>
+);

@@ -15,9 +15,7 @@ export const PostContextProvider = ({ children }) => {
       queryKey: ["posts", userId],
       queryFn: async () => {
         const baseURL = import.meta.env.VITE_BASE_URL;
-        const endpoint = userId
-          ? `${baseURL}/api/posts/${userId}`
-          : `${baseURL}/api/posts`;
+        const endpoint = userId ? `${baseURL}/api/posts/${userId}` : `${baseURL}/api/posts`;
         try {
           const postsResponse = await axios.get(endpoint);
           return postsResponse.data.data || [];
@@ -39,16 +37,12 @@ export const PostContextProvider = ({ children }) => {
     return useMutation({
       mutationFn: async (data) => {
         const baseURL = import.meta.env.VITE_BASE_URL;
-        const postsResponse = await axiosJWT.post(
-          `${baseURL}/api/posts`,
-          data,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-              "Content-Type": "multipart/form-data",
-            },
-          }
-        );
+        const postsResponse = await axiosJWT.post(`${baseURL}/api/posts`, data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        });
 
         return postsResponse;
       },
@@ -61,15 +55,11 @@ export const PostContextProvider = ({ children }) => {
     return useMutation({
       mutationFn: async (data) => {
         const baseURL = import.meta.env.VITE_BASE_URL;
-        const commentResponse = await axiosJWT.post(
-          `${baseURL}/api/posts/comments`,
-          data,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const commentResponse = await axiosJWT.post(`${baseURL}/api/posts/comments`, data, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
         return commentResponse;
       },

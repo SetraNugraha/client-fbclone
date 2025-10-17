@@ -1,13 +1,11 @@
 /* eslint-disable no-unused-vars */
-import Title from '../components/login/Title'
-import FormLogin from '../components/login/FormLogin'
-import Footer from '../components/login/Footer'
-import { useAuth } from '../features/auth/useAuth'
-import Modal from '../elements/Modal'
+import Title from "../components/login/Title";
+import FormLogin from "../components/login/FormLogin";
+import Footer from "../components/login/Footer";
+import { useAuth } from "../features/auth/useAuth";
+import Modal from "../elements/Modal";
 
 export default function Login() {
-  const { handleLogin, loginLoading } = useAuth()
-
   return (
     <>
       <div className="bg-slate-100 h-dvh w-full">
@@ -18,10 +16,8 @@ export default function Login() {
           </div>
           {/* Form Login */}
           <div>
-            <FormLogin
-              onLogin={handleLogin}
-              loginLoading={loginLoading}
-            />
+            {/* <FormLogin onLogin={handleLogin} loginLoading={loginLoading} /> */}
+            <FormLogin />
           </div>
         </div>
         <div className="bg-white h-[25%]">
@@ -30,14 +26,14 @@ export default function Login() {
           </div>
         </div>
 
-        {loginLoading && (
+        {/* {loginLoading && (
           <Modal>
             <Modal.Body>
               <h1 className="font-semibold text-center p-3 italic">Sedang memproses autentikasi, mohon tunggu sebentar ....</h1>
             </Modal.Body>
           </Modal>
-        )}
+        )} */}
       </div>
     </>
-  )
+  );
 }
