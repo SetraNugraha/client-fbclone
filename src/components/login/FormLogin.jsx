@@ -93,7 +93,7 @@ export default function FormLogin() {
           </form>
 
           {/* Forgot Password */}
-          <div className="flex justify-center items-center mb-5">
+          <div className="flex justify-center items-center mt-2 mb-5">
             <a href="#" onClick={() => alert("Feature not available yet.")} className="text-center text-blue-600 hover:underline ">
               Forgotten password?
             </a>

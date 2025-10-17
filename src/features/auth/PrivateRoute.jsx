@@ -3,6 +3,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useAuth } from "./useAuth";
+import { LoadingOverlay } from "../../elements/LoadingOverlay";
 
 const PrivateRoute = () => {
   const { authUser, token, refreshToken } = useAuth();
@@ -19,6 +20,10 @@ const PrivateRoute = () => {
 
   if (isLoading) {
     return <LoadingOverlay isLoading={isLoading} />;
+  }
+
+  if (!token || !authUser) {
+    return <Navigate to={"/"} replace />;
   }
 
   return authUser && token ? <Outlet /> : <Navigate to={"/"} replace />;

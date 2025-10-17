@@ -1,21 +1,29 @@
 /* eslint-disable no-unused-vars */
-import axios from 'axios'
-import { useQuery } from 'react-query'
+import { useQuery } from "react-query";
+import { axiosInstance } from "../../lib/axios";
+import { useAuth } from "../auth/useAuth";
+
+export const fetchUserById = async (userId, token) => {
+  const res = await axiosInstance.get(`/user/${userId}`, {
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  return res.data.data;
+};
 
 export const useFetchUserById = (userId) => {
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ['users', userId],
-    queryFn: async () => {
-      const baseURL = import.meta.env.VITE_BASE_URL
-      const userByIdResponse = await axios.get(`${baseURL}/api/users/${userId}`)
-
-      return userByIdResponse.data.data
-    },
-  })
+  const { token } = useAuth();
+  const { data, isLoading, error } = useQuery({
+    queryKey: ["user", userId],
+    queryFn: () => fetchUserById(userId, token),
+    enabled: !!userId && !!token,
+  });
 
   return {
     data,
     isLoading,
-    refetch,
-  }
-}
+    error,
+  };
+};

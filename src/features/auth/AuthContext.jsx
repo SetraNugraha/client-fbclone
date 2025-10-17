@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { axiosInstance } from "../../lib/axios";
 import { useMutation } from "react-query";
 import { objectToFormData } from "../../utils/objectToFormData";
+import { fetchUserById } from "../users/useFetchUserById";
 
 const AuthContext = createContext();
 
@@ -27,18 +28,16 @@ export const AuthContextProvider = ({ children }) => {
   });
 
   const login = useMutation({
+    mutationKey: ["user"],
     mutationFn: async (credentials) => {
-      const res = await axiosInstance.post("/auth/login", credentials, {
-        withCredentials: true,
-      });
+      const res = await axiosInstance.post("/auth/login", credentials);
       return res.data.data;
     },
     onSuccess: (data) => {
-      const { access_token } = data;
-      const decode = jwtDecode(access_token);
+      const { access_token, user } = data;
 
       setToken(access_token);
-      setAuthUser(decode);
+      setAuthUser(user);
     },
     onError: (error) => {
       setToken(null);
@@ -46,29 +45,56 @@ export const AuthContextProvider = ({ children }) => {
     },
   });
 
-  const logout = async () => {
-    const res = await axiosInstance.post("/auth/logout", null, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+  const logout = useMutation({
+    mutationFn: async () => {
+      const res = await axiosInstance.post("/auth/logout", null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-    return res.data;
-  };
+      return res.data;
+    },
+    onSuccess: (data) => {
+      alert(data.message);
+      setToken(null);
+      setAuthUser(null);
+    },
+    onError: (error) => {
+      console.log("logout error: ", error.response?.data);
+      setToken(null);
+      setAuthUser(null);
+    },
+  });
+
+  // const logout = async () => {
+  //   const res = await axiosInstance.post("/auth/logout", null, {
+  //     headers: {
+  //       Authorization: `Bearer ${token}`,
+  //     },
+  //   });
+
+  //   return res.data;
+  // };
 
   const refreshToken = async () => {
-    const res = await axiosInstance.get("/auth/refresh-token", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    try {
+      const res = await axiosInstance.get("/auth/refresh-token");
 
-    const { access_token } = res.data.data;
-    const decode = jwtDecode(access_token);
-    setToken(access_token);
-    setExpired(decode.exp);
-    setAuthUser(decode);
-    return access_token;
+      const { access_token } = res.data;
+      const decode = jwtDecode(access_token);
+
+      // Fetch User By userId
+      const user = await fetchUserById(decode.sub, access_token);
+      setAuthUser(user);
+
+      setToken(access_token);
+      setExpired(decode.exp);
+      return access_token;
+    } catch (error) {
+      setToken(null);
+      setAuthUser(null);
+    }
   };
 
   // Check Expired Access Token
