@@ -8,13 +8,12 @@ import CreatePost from "../components/homepage/CreatePost";
 import Rightbar from "../components/homepage/Rightbar";
 import CardPost from "../components/homepage/CardPost";
 import { useAuth } from "../features/auth/useAuth";
-import { usePostAction } from "../features/posts/usePosts";
 import Modal from "../elements/Modal";
+import { usePosts } from "../features/posts/usePosts";
 
 export default function Homepage() {
-  const { authUser, logoutLoading } = useAuth();
-  const { useFetchPosts } = usePostAction();
-  const { data: posts, isLoading, refetch: refetchAllPosts } = useFetchPosts();
+  const { authUser } = useAuth();
+  const { posts, postsIsLoading } = usePosts({});
 
   return (
     <>
@@ -35,10 +34,10 @@ export default function Homepage() {
             <CreatePost />
 
             {/* Postingan */}
-            {isLoading ? (
+            {postsIsLoading ? (
               <p className=" mt-7 text-center text-slate-400 font-semibold">Loading ...</p>
             ) : (
-              <CardPost userId={null} posts={posts} refetchAllPosts={refetchAllPosts} />
+              <CardPost userId={null} posts={posts} />
             )}
           </div>
 
@@ -47,14 +46,6 @@ export default function Homepage() {
             <Rightbar />
           </div>
         </div>
-
-        {logoutLoading && (
-          <Modal>
-            <Modal.Body>
-              <h1 className="font-semibold text-center p-3 italic">Sedang Proses Logout, Mohon Tunggu Sebentar ....</h1>
-            </Modal.Body>
-          </Modal>
-        )}
       </div>
     </>
   );

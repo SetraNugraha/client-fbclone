@@ -5,7 +5,6 @@ import Navbar from "../components/homepage/Navbar";
 import { HeaderProfile } from "../components/profile/HeaderProfile";
 import { LeftContent } from "../components/profile/LeftContent";
 import { RightContent } from "../components/profile/RightContent";
-import { usePostAction } from "../features/posts/usePosts";
 import CardPost from "../components/homepage/CardPost";
 import { useParams } from "react-router-dom";
 import { useFetchUserById } from "../features/users/useFetchUserById";
@@ -14,7 +13,6 @@ import Modal from "../elements/Modal";
 
 export default function Profile() {
   const { authUser, logoutLoading } = useAuth();
-  const { useFetchPosts } = usePostAction();
   const { userId } = useParams();
 
   // Posts

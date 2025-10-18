@@ -7,12 +7,12 @@ import { FaVideo, BsFileImage, CgSmileMouthOpen, MdOutlineDisabledByDefault } fr
 
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
-import { useFormik } from "formik";
 import Modal from "../../elements/Modal";
 import { Addons } from "./partials/CreatePost/Addons";
 import { Header } from "./partials/CreatePost/Header";
 import { useAuth } from "../../features/auth/useAuth";
-import { usePostAction } from "../../features/posts/usePosts";
+import { usePosts } from "../../features/posts/usePosts";
+import { AxiosError } from "axios";
 
 // Upload Post Component
 const UploadPost = ({ btnName, Icon, IconColor }) => {
@@ -30,17 +30,20 @@ const UploadPost = ({ btnName, Icon, IconColor }) => {
 
 export default function CreatePost({ userId }) {
   const { authUser } = useAuth();
-  const { useCreatePost, useFetchPosts } = usePostAction();
-  const { refetch: refetchAllPosts } = useFetchPosts();
-  const { refetch: refetchPostsByUserId } = useFetchPosts(userId);
+  const { createPost } = usePosts();
   const textAreaRef = useRef(null);
-  const [fileImgPost, setFileImgPost] = useState(null);
   const profileImageURL = import.meta.env.VITE_URL_PROFILE_IMAGE;
   const urlImage = authUser.profile_image ? `${profileImageURL}/${authUser.profile_image}` : "/img/profile-default.jpg";
 
   const [modalCreatePost, setModalCreatePost] = useState(() => {
     const getModalCreatePost = localStorage.getItem("modalCreatePost");
     return getModalCreatePost ? JSON.parse(getModalCreatePost) : false;
+  });
+
+  // STATE Payload Create Post
+  const [payload, setPayload] = useState({
+    body: "",
+    post_image: null,
   });
 
   const handleModalCreatePost = () => {
@@ -50,9 +53,12 @@ export default function CreatePost({ userId }) {
     }, 0);
   };
 
-  const handleUploadImgPost = (event) => {
-    const file = event.target.files[0];
-    if (file) {
+  const handleChange = (e) => {
+    const { name, value, type, files } = e.target;
+
+    if (type === "file") {
+      const file = files[0];
+
       // file type
       if (!["image/jpg", "image/jpeg", "image/png"].includes(file.type)) {
         alert("Invlaid file type, please select a jpg, jpeg, or png image");
@@ -65,116 +71,100 @@ export default function CreatePost({ userId }) {
         return;
       }
 
-      formik.setFieldValue("post_image", file);
-      setFileImgPost(file.name);
+      setPayload((prev) => ({
+        ...prev,
+        [name]: file || null,
+      }));
+    } else {
+      setPayload((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
     }
   };
 
-  const handleRemoveFileImgPost = () => {
-    formik.setFieldValue("post_image", null);
-    setFileImgPost(null);
-    document.getElementById("uploadImgPost").value = null;
-  };
+  const handleCreatePost = (e) => {
+    e.preventDefault();
 
-  const formik = useFormik({
-    initialValues: {
-      user_id: "",
-      body: "",
-      post_image: null,
-    },
-    onSubmit: (values, { resetForm }) => {
-      const formData = new FormData();
-      formData.append("user_id", parseInt(authUser.id));
-      formData.append("body", values.body);
+    createPost.mutate(payload, {
+      onSuccess: (data) => {
+        setPayload({
+          body: "",
+          post_image: null,
+        });
+        alert("success create new post");
+        setModalCreatePost(false);
+      },
+      onError: (error) => {
+        console.error("createPost Mutate error: ", error.response?.data);
+        if (error instanceof AxiosError) {
+          const errors = error.response?.data?.errors;
 
-      if (values.post_image) {
-        formData.append("post_image", values.post_image);
-      }
-
-      createPostMutation.mutate(formData);
-      resetForm();
-    },
-  });
-
-  const createPostMutation = useCreatePost({
-    onSuccess: () => {
-      refetchAllPosts();
-      refetchPostsByUserId();
-      setFileImgPost(null);
-      alert("Post Successfuly Created.");
-      setModalCreatePost(false);
-    },
-    onError: () => {
-      alert("Error While Creating Post !");
-      setFileImgPost(null);
-      setModalCreatePost(false);
-    },
-  });
-
-  const handleFormInput = (event) => {
-    const { name, value } = event.target;
-    formik.setFieldValue(name, value);
-  };
-
-  // Text Post Component
-  const TextPost = () => {
-    return (
-      <>
-        <Link to={`/profile/${authUser.id}`}>
-          <img src={urlImage} alt="" className="w-[43px] h-[43px] rounded-full border border-slate-300" />
-        </Link>
-        <input
-          type="text"
-          htmlFor="body"
-          onClick={handleModalCreatePost}
-          className="w-[90%] rounded-full cursor-pointer bg-slate-200 px-5 placeholder:text-slate-600 placeholder:text-md border-[1px] focus:outline-none focus:border-blue-600"
-          placeholder={`Apa yang Anda pikirkan, ${authUser.first_name}?`}
-        />
-      </>
-    );
+          if (errors.body) {
+            alert(errors.body[0]);
+          } else if (errors.post_image) {
+            alert(errors.post_images[0]);
+          } else {
+            alert("error while creating post, please try again later.");
+          }
+        }
+      },
+    });
   };
 
   return (
     <>
       <div className="bg-white rounded-lg border-[0.5px] border-slate-300 mb-5">
         {/* Profile & Input */}
-        <div className="w-[96%] flex justify-start items-center gap-x-4 py-2 mx-auto border-b-2 border-gray-300">
-          <TextPost />
+        <div className="p-2 mx-auto border-b-2 border-gray-300">
+          <div className="w-full flex items-center justify-around gap-x-2">
+            <Link to={`/profile/${authUser.id}`}>
+              <img src={urlImage} alt="profile-image" className="w-[43px] h-[43px] rounded-full border border-slate-300 hover:brightness-50" />
+            </Link>
+            {/* Trigger Modal Create Post */}
+            <input
+              type="text"
+              name="body"
+              htmlFor="body"
+              onClick={handleModalCreatePost}
+              className="w-[90%] rounded-full cursor-pointer bg-slate-200 px-5 placeholder:text-slate-600 placeholder:text-md border-[1px] focus:outline-none focus:border-blue-600"
+              placeholder={`Apa yang Anda pikirkan, ${authUser.first_name}?`}
+            />
+          </div>
         </div>
         {/* End Profile & Input */}
 
         {/* Modal Create Post */}
         {modalCreatePost && (
           <Modal>
-            <Modal.Header title="Create Post" disabled={createPostMutation.isLoading} onClick={() => setModalCreatePost(false)} />
+            <Modal.Header title="Create Post" disabled={createPost.isLoading} onClick={() => setModalCreatePost(false)} />
             <Modal.Body>
               {/* Body Profile */}
               <Header authUser={authUser} />
               {/* End Body Profile */}
 
               {/* Body Post */}
-              <form onSubmit={formik.handleSubmit}>
-                <div>
-                  <textarea
-                    type="text"
-                    name="body"
-                    id="body"
-                    ref={textAreaRef}
-                    onChange={handleFormInput}
-                    value={formik.values.body}
-                    placeholder={`Apa yang Anda pikirkan, ${authUser.first_name}?`}
-                    className="text-xl pt-3 mt-3 w-full h-[200px] border-none placeholder:text-2xl resize-none focus:border-none focus:outline-none focus:ring-0"
-                  />
-                </div>
+              <form onSubmit={handleCreatePost}>
+                <textarea
+                  type="text"
+                  name="body"
+                  id="body"
+                  ref={textAreaRef}
+                  onChange={handleChange}
+                  value={payload.body}
+                  placeholder={`Apa yang Anda pikirkan, ${authUser.first_name}?`}
+                  className="text-xl pt-3 mt-3 w-full h-[200px] border-none placeholder:text-2xl resize-none focus:border-none focus:outline-none focus:ring-0"
+                />
+
                 {/* End Body Post */}
 
                 {/* File Upload Name */}
-                {fileImgPost && (
+                {payload.post_image && (
                   <div className=" mb-2 ml-1 flex gap-x-2 items-center">
-                    <p className="font-semibold text-xs text-slate-700 bg-slate-300 px-2 py-1 inline-block rounded-md">{fileImgPost}</p>
+                    <p className="font-semibold text-xs text-slate-700 bg-slate-300 px-2 py-1 inline-block rounded-md">{payload.post_image.name}</p>
 
                     {/* Button Remove File Image */}
-                    <button onClick={handleRemoveFileImgPost} className="text-red-500 font-semibold">
+                    <button onClick={() => setPayload((prev) => ({ ...prev, post_image: null }))} className="text-red-500 font-semibold">
                       x
                     </button>
                   </div>
@@ -182,29 +172,17 @@ export default function CreatePost({ userId }) {
                 {/* END File Upload Name */}
 
                 {/* Addons */}
-                <Addons onChange={handleUploadImgPost} />
+                <Addons onChange={handleChange} />
                 {/* END Addons */}
 
                 {/* Footer Button Submit */}
-                <div>
-                  {createPostMutation.isLoading ? (
-                    <button
-                      disabled={createPostMutation.isLoading}
-                      type="submit"
-                      className="py-1 disabled:cursor-not-allowed disabled:bg-slate-400 bg-blue-500 text-white font-semibold w-full my-3 rounded-lg text-lg hover:bg-opacity-70"
-                    >
-                      Creating Post ....
-                    </button>
-                  ) : (
-                    <button
-                      disabled={formik.values.body.length === 0 && !formik.values.post_image}
-                      type="submit"
-                      className="py-1 disabled:cursor-not-allowed disabled:bg-slate-400 bg-blue-500 text-white font-semibold w-full my-3 rounded-lg text-lg hover:bg-opacity-70"
-                    >
-                      Post
-                    </button>
-                  )}
-                </div>
+                <button
+                  disabled={(payload.body.length === 0 && !payload.post_image) || createPost.isLoading}
+                  type="submit"
+                  className="py-1 disabled:cursor-not-allowed disabled:bg-slate-400 bg-blue-500 text-white font-semibold w-full my-3 rounded-lg text-lg hover:bg-opacity-70"
+                >
+                  {createPost.isLoading ? "Please wait .... " : "Post"}
+                </button>
                 {/* End Footer Button Submit */}
               </form>
             </Modal.Body>

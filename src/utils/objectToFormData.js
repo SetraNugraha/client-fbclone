@@ -6,7 +6,7 @@ export const objectToFormData = (fields) => {
       if (typeof value === "string" || typeof value === "number") {
         formData.append(key, value.toString().trim());
       } else if (value instanceof File) {
-        formData.append(value);
+        formData.append(key, value);
       }
     }
   });

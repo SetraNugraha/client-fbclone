@@ -5,7 +5,6 @@ import { useState } from "react";
 import { useFormik } from "formik";
 import { Link } from "react-router-dom";
 import { useAuth } from "../../../../features/auth/useAuth";
-import { usePostAction } from "../../../../features/posts/usePosts";
 
 // Text Comment
 const RenderComment = ({ textComment }) => {
@@ -117,36 +116,12 @@ const RecentComment = ({ username, profileImg, textComment, date, userId }) => {
   );
 };
 
-export const CommentSection = ({ post, userId, refetchAllPosts }) => {
+export const CommentSection = ({ post, userId }) => {
   const { authUser } = useAuth();
-  const { useCreateComment } = usePostAction();
   const profileImageURL = import.meta.env.VITE_URL_PROFILE_IMAGE;
-  const comments = post.comment;
+  const comments = post.comments;
   const profileImgUserLogin = authUser.profile_image;
   const urlImageAuthUser = profileImgUserLogin ? `${profileImageURL}/${profileImgUserLogin}` : "/img/profile-default.jpg";
-
-  const createCommentMutation = useCreateComment({
-    onSuccess: () => {
-      refetchAllPosts();
-    },
-  });
-
-  const formik = useFormik({
-    initialValues: {
-      post_id: parseInt(post.id),
-      user_id: parseInt(userId),
-      body: "",
-    },
-    onSubmit: (values, { resetForm }) => {
-      createCommentMutation.mutate(values);
-      resetForm();
-    },
-  });
-
-  const formatDate = (dateString) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString();
-  };
 
   return (
     <>
@@ -168,27 +143,20 @@ export const CommentSection = ({ post, userId, refetchAllPosts }) => {
       })}
 
       {/* Input Comment */}
-      <div className="h-[50px] flex justify-start items-center gap-2 px-5 pb-3">
-        <a href="#">
-          <img src={urlImageAuthUser} alt="profile-image" className="h-[40px] w-[40px] rounded-full" />
+      <div className="h-[50px] flex justify-around items-center gap-x-4 px-5 pb-3">
+        <a href="#" className="h-[40px] w-[45px]">
+          <img src={urlImageAuthUser} alt="profile-image" className="size-full rounded-full" />
         </a>
-        <form className="w-full relative" onSubmit={formik.handleSubmit}>
+        <form className="w-full relative">
           <div className="w-full relative">
             <input
               type="text"
               name="body"
-              disabled={createCommentMutation.isLoading}
-              onChange={formik.handleChange}
-              value={formik.values.body}
               className="h-[95%] w-full rounded-2xl bg-slate-100 px-5 placeholder:text-slate-600 placeholder:text-lg disabled:cursor-not-allowed"
-              placeholder={createCommentMutation.isLoading ? "Proses Mengirim Komentar ...." : "Tulis Komentar ...."}
+              placeholder={"Tulis Komentar ...."}
             />
 
-            <button
-              type="submit"
-              disabled={createCommentMutation.isLoading}
-              className="absolute top-1/2 transform -translate-y-1/2 right-4 disabled:cursor-not-allowed"
-            >
+            <button type="submit" className="absolute top-1/2 transform -translate-y-1/2 right-4 disabled:cursor-not-allowed">
               <IoPaperPlaneSharp className="w-[20px] h-[20px] text-slate-500" />
             </button>
           </div>
