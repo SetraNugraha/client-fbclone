@@ -4,69 +4,16 @@
 /* eslint-disable react/prop-types */
 import { BsChat, BiLike, MdOutlineDisabledByDefault, PiShareFat, HiThumbUp } from "../../assets/icons";
 import { useState } from "react";
-import { CommentSection } from "./partials/CardPost/CommentSection";
+import { CommentSection } from "./partials/CardPost/Comments/CommentSection";
 import { HeaderPost } from "./partials/CardPost/HeaderPost";
 import { useAuth } from "../../features/auth/useAuth";
-
-// Content Post Component
-const RenderContent = ({ content }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
-
-  const toggleReadMore = () => {
-    setIsExpanded(true);
-  };
-
-  const maxLength = 100;
-
-  if (content.length <= maxLength || isExpanded) {
-    return <p className="break-words">{content}</p>;
-  } else {
-    return (
-      <>
-        <p className="break-words">
-          {`${content.substring(0, maxLength)} ...`}{" "}
-          <span>
-            <button onClick={toggleReadMore} className="font-semibold text-sm hover:border-b-[1px] hover:border-black">
-              Lihat Selengkapnya ...
-            </button>
-          </span>
-        </p>
-      </>
-    );
-  }
-};
-
-// Button Action Post Component
-const ButtonActionPost = ({ Icon, title, onClick }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="h-[85%] w-1/3 font-semibold text-slate-500 flex justify-center items-center gap-2 rounded-sm hover:bg-slate-200"
-    >
-      {Icon ? <Icon className="size-[20px]" /> : <MdOutlineDisabledByDefault className="size-[20px]" />}
-      <p className="text-sm">{title}</p>
-    </button>
-  );
-};
+import { RenderBodyPost } from "./partials/CardPost/RenderBodyPost";
+import { LikeButton } from "./partials/CardPost/Likes/LikeButton";
+import { ButtonActionPost } from "./partials/CardPost/ButtonActionPost";
 
 export default function CardPost({ userId, posts }) {
   const { authUser } = useAuth();
   const [showInputComment, setShowInputComment] = useState(null);
-
-  const LikeButton = ({ postId, userId, initialLiked }) => {
-    const [hasLike, setHasLike] = useState(initialLiked);
-
-    return (
-      <button
-        className={`h-[85%] w-1/3 font-semibold text-${
-          hasLike ? "blue" : "slate"
-        }-500 flex justify-center items-center gap-2 rounded-sm hover:bg-slate-200`}
-      >
-        <BiLike className={`size-[20px] text-${hasLike ? "blue" : "slate"}-500`} />
-        <p className="text-sm">{hasLike ? "Liked" : "Like"}</p>
-      </button>
-    );
-  };
 
   if (!posts || posts.length === 0) {
     return <p className=" mt-7 text-center text-slate-400 font-semibold">No Post Found !</p>;
@@ -75,8 +22,6 @@ export default function CardPost({ userId, posts }) {
   return (
     <div>
       {posts.map((post, index) => {
-        const IMAGE_URL = import.meta.env.VITE_URL_IMAGE;
-        const postImage = post.post_image ? IMAGE_URL + post.post_image : null;
         const isLastPost = index === posts.length - 1;
         return (
           <div key={post.id} className="max-h-100 mb-5">
@@ -86,12 +31,7 @@ export default function CardPost({ userId, posts }) {
 
               {/* Post User */}
               <div className="px-4 py-2">
-                <RenderContent content={post.body} />
-                {postImage && (
-                  <a href={postImage} target="_blank" rel="noreferrer">
-                    <img src={postImage} alt="" className="py-3 max-h-100 max-w-100" />
-                  </a>
-                )}
+                <RenderBodyPost post={post} />
               </div>
 
               {/* Info Like & Comment */}
@@ -113,13 +53,15 @@ export default function CardPost({ userId, posts }) {
               >
                 {/* Like Button */}
                 <LikeButton postId={post.id} userId={authUser.id} />
-                {/* END Like Button */}
 
+                {/* Comment Button */}
                 <ButtonActionPost
                   Icon={BsChat}
                   title={"Comment"}
                   onClick={() => setShowInputComment(showInputComment === post.id ? null : post.id)}
                 />
+
+                {/* Share Button */}
                 <ButtonActionPost Icon={PiShareFat} title={"Share"} />
               </div>
 

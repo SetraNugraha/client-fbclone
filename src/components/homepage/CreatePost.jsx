@@ -104,9 +104,8 @@ export default function CreatePost({ userId }) {
             alert(errors.body[0]);
           } else if (errors.post_image) {
             alert(errors.post_images[0]);
-          } else {
-            alert("error while creating post, please try again later.");
           }
+          return alert("error while creatinf post, please try again later.");
         }
       },
     });

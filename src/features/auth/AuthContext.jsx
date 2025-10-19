@@ -4,7 +4,7 @@
 import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { axiosInstance } from "../../lib/axios";
+import { axiosInstance, setupAxiosAuth } from "../../lib/axios";
 import { useMutation } from "react-query";
 import { objectToFormData } from "../../utils/objectToFormData";
 import { fetchUserById } from "../users/useFetchUserById";
@@ -67,16 +67,6 @@ export const AuthContextProvider = ({ children }) => {
     },
   });
 
-  // const logout = async () => {
-  //   const res = await axiosInstance.post("/auth/logout", null, {
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //     },
-  //   });
-
-  //   return res.data;
-  // };
-
   const refreshToken = async () => {
     try {
       const res = await axiosInstance.get("/auth/refresh-token");
@@ -97,6 +87,10 @@ export const AuthContextProvider = ({ children }) => {
     }
   };
 
+  useEffect(() => {
+    setupAxiosAuth(token);
+  }, [token]);
+
   // Check Expired Access Token
   useEffect(() => {
     const interceptor = axiosInstance.interceptors.request.use(
@@ -105,6 +99,7 @@ export const AuthContextProvider = ({ children }) => {
         if (expired && expired * 1000 < currentDate.getTime()) {
           try {
             const newToken = await refreshToken();
+            console.log("token: ", newToken);
             if (newToken) {
               config.headers.Authorization = `Bearer ${newToken}`;
             } else if (token) {
