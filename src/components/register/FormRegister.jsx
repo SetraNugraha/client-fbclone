@@ -1,6 +1,6 @@
 import { InputForm } from "../../elements/InputForm";
 import { useState } from "react";
-import { useAuth } from "../../features/auth/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { AxiosError } from "axios";
 import { PrivacyPolicy } from "./PrivacyPolicy";
 import { DateOfBirth } from "./DateOfBirth";

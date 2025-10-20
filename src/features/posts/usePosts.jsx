@@ -1,5 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useAuth } from "../auth/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { axiosInstance } from "../../lib/axios";
 import { objectToFormData } from "../../utils/objectToFormData";
 
@@ -11,10 +11,15 @@ export const usePosts = ({ userId } = {}) => {
   const { data: posts, isLoading: postsIsLoading } = useQuery({
     queryKey: ["posts"],
     queryFn: async () => {
-      const res = await axiosInstance.get("/post/all");
+      const res = await axiosInstance.get("/post/all", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
       return res.data.data;
     },
+    enabled: !!token,
   });
 
   // GET Posts by userId

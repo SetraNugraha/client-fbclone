@@ -7,38 +7,35 @@ import { LeftContent } from "../components/profile/LeftContent";
 import { RightContent } from "../components/profile/RightContent";
 import CardPost from "../components/homepage/CardPost";
 import { useParams } from "react-router-dom";
-import { useFetchUserById } from "../features/users/useFetchUserById";
-import { useAuth } from "../features/auth/useAuth";
-import Modal from "../elements/Modal";
+import { useAuth } from "@/hooks/useAuth";
+import { usePosts } from "@/hooks/usePosts";
+import { useUsers } from "@/hooks/useUsers";
+import { LoadingOverlay } from "../elements/LoadingOverlay";
+import { useEffect } from "react";
+import { useUserPosts } from "../hooks/posts";
 
 export default function Profile() {
-  const { authUser, logoutLoading } = useAuth();
+  const { authUser } = useAuth();
   const { userId } = useParams();
-
-  // Posts
-  const { data: posts, isLoading, refetch: refetchAllPostsByUserId } = useFetchPosts(userId);
-
-  // Data User, Using for header
-  const { data: userById, isLoading: loadingUserById } = useFetchUserById(userId);
+  const { data: postsUser, isLoading: postsUserIsLoading } = useUserPosts(userId);
+  const { user, isLoading } = useUsers({ userId: userId });
 
   const isOwnProfile = authUser.id == userId;
 
-  if (loadingUserById) {
-    return <p className=" mt-7 text-center text-slate-400 font-semibold">Loading User Profile</p>;
-  }
-
   return (
     <>
+      <LoadingOverlay isLoading={isLoading && postsUserIsLoading} />
+
       <div className="w-full h-dvh flex flex-col bg-slate-200 overflow-y-auto">
         {/* Navbar */}
         <div>
-          <Navbar />
+          <Navbar authUser={authUser} />
         </div>
 
         <div className="bg-white border-b border-slate-300 pt-20">
           <div className="w-[65%] mx-auto ">
             {/* Header */}
-            {isOwnProfile ? <HeaderProfile user={authUser} /> : <HeaderProfile user={userById} />}
+            {isOwnProfile ? <HeaderProfile user={authUser} /> : <HeaderProfile user={user} />}
           </div>
         </div>
 
@@ -55,25 +52,20 @@ export default function Profile() {
             {/* Right */}
             <div className="w-[60%] overflow-y-auto">
               <div className="flex flex-col">
-                {isOwnProfile && <RightContent userId={userId} />}
+                {isOwnProfile && <RightContent user={authUser} />}
 
-                {isLoading ? (
+                {postsUserIsLoading ? (
                   <p className=" mt-7 text-center text-slate-400 font-semibold">Loading ...</p>
                 ) : (
-                  <CardPost userId={userId} posts={posts} refetchAllPosts={refetchAllPostsByUserId} />
+                  postsUser?.posts.map((post, index) => {
+                    const isLastPost = index === postsUser?.posts.length - 1;
+                    return <CardPost key={index} author={postsUser?.author} post={post} isLastPost={isLastPost} />;
+                  })
                 )}
               </div>
             </div>
           </div>
         </div>
-
-        {logoutLoading && (
-          <Modal>
-            <Modal.Body>
-              <h1 className="font-semibold text-center p-3 italic">Sedang Proses Logout, Mohon Tunggu Sebentar ....</h1>
-            </Modal.Body>
-          </Modal>
-        )}
       </div>
     </>
   );

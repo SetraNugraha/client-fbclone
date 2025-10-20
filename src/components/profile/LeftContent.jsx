@@ -1,19 +1,42 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable react/prop-types */
 /* eslint-disable no-unused-vars */
+import { useEffect, useRef, useState } from "react";
 import { copyright } from "../../dummyData/dummyData";
 import { friends } from "../homepage/partials/Rightbar/friends";
-import { useAuth } from "../../features/auth/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 
 export const LeftContent = ({ userId }) => {
   const { authUser } = useAuth();
   const isOwnProfile = authUser.id === parseInt(userId);
 
+  const listFriendsRef = useRef(null);
+  const [isFixed, setIsFixed] = useState(false);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsFixed(!entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    if (listFriendsRef.current) {
+      observer.observe(listFriendsRef.current);
+    }
+
+    return () => {
+      if (listFriendsRef.current) {
+        observer.unobserve(listFriendsRef.current);
+      }
+    };
+  }, []);
+
   return (
     <>
       {/* Intro */}
       {isOwnProfile && (
-        <div className="bg-white border-[0.5px] border-slate-300 rounded-lg px-4 py-4 mb-5">
+        <div className="w-[500px] bg-white border-[0.5px] border-slate-300 rounded-lg px-4 py-4 mb-5">
           <h1 className="font-bold text-xl pb-4">Intro</h1>
           <div className="flex flex-col gap-y-5">
             <button className="font-semibold  w-full bg-slate-200 rounded-md py-2 hover:bg-slate-300">Tambahkan Biografi</button>
@@ -24,7 +47,7 @@ export const LeftContent = ({ userId }) => {
       )}
 
       {/* Foto */}
-      <div>
+      <div ref={listFriendsRef} className="w-[500px]">
         <div className="flex justify-between items-center px-5 bg-white border-[0.5px] border-slate-300 py-3 rounded-lg">
           {/* Title */}
           <div>
@@ -41,8 +64,8 @@ export const LeftContent = ({ userId }) => {
       </div>
 
       {/* List Teman */}
-      <div>
-        <div className="flex flex-col justify-between items-start px-5 mt-5 pb-8 bg-white py-3 rounded-lg border-[0.5px] border-slate-300">
+      <div className={`w-[500px] ${isFixed ? "xl:fixed xl:top-12 xl:left-[333px] transition-all duration-200" : ""}`}>
+        <div className={`flex flex-col justify-between items-start px-5 mt-5 pb-8 bg-white py-3 rounded-lg border-[0.5px] border-slate-300`}>
           {/* Header */}
           <div className="flex justify-between items-start w-full">
             {/* Title */}
@@ -73,16 +96,16 @@ export const LeftContent = ({ userId }) => {
             ))}
           </div>
         </div>
-      </div>
 
-      {/* Copyright */}
-      <div className="flex gap-x-2 mt-2 ml-2 text-[13px]">
-        {copyright.map((item, index) => (
-          <a key={index} href="#" className="hover:border-b hover:border-black ">
-            {item}
-          </a>
-        ))}
-        <span>Meta &copy; 2024</span>
+        {/* Copyright */}
+        <div className="flex gap-x-2 mt-2 ml-2 text-[13px]">
+          {copyright.map((item, index) => (
+            <a key={index} href="#" className="hover:border-b hover:border-black ">
+              {item}
+            </a>
+          ))}
+          <span>Meta &copy; 2024</span>
+        </div>
       </div>
     </>
   );

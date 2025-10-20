@@ -4,10 +4,11 @@
 import { createContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
-import { axiosInstance, setupAxiosAuth } from "../../lib/axios";
+import { axiosInstance, setupAxiosAuth } from "@/lib/axios";
 import { useMutation } from "react-query";
-import { objectToFormData } from "../../utils/objectToFormData";
-import { fetchUserById } from "../users/useFetchUserById";
+import { objectToFormData } from "@/utils/objectToFormData";
+import { getUserAPI } from "@/api/users.api";
+import { fetchUserById } from "@/features/users/useFetchUserById";
 
 const AuthContext = createContext();
 
@@ -75,7 +76,7 @@ export const AuthContextProvider = ({ children }) => {
       const decode = jwtDecode(access_token);
 
       // Fetch User By userId
-      const user = await fetchUserById(decode.sub, access_token);
+      const user = await getUserAPI(decode.sub, access_token);
       setAuthUser(user);
 
       setToken(access_token);
@@ -88,10 +89,11 @@ export const AuthContextProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    setupAxiosAuth(token);
+    if (token) {
+      setupAxiosAuth(token);
+    }
   }, [token]);
 
-  // Check Expired Access Token
   useEffect(() => {
     const interceptor = axiosInstance.interceptors.request.use(
       async (config) => {
@@ -99,8 +101,8 @@ export const AuthContextProvider = ({ children }) => {
         if (expired && expired * 1000 < currentDate.getTime()) {
           try {
             const newToken = await refreshToken();
-            console.log("token: ", newToken);
             if (newToken) {
+              setToken(newToken);
               config.headers.Authorization = `Bearer ${newToken}`;
             } else if (token) {
               config.headers.Authorization = `Bearer ${token}`;
@@ -121,7 +123,7 @@ export const AuthContextProvider = ({ children }) => {
     return () => {
       axiosInstance.interceptors.request.eject(interceptor);
     };
-  }, [token, expired]);
+  }, []);
 
   const value = {
     token,

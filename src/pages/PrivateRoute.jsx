@@ -2,8 +2,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { Navigate, Outlet } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { useAuth } from "./useAuth";
-import { LoadingOverlay } from "../../elements/LoadingOverlay";
+import { useAuth } from "@/hooks/useAuth";
+import { LoadingOverlay } from "../elements/LoadingOverlay";
 
 const PrivateRoute = () => {
   const { authUser, token, refreshToken } = useAuth();
@@ -11,10 +11,14 @@ const PrivateRoute = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      await refreshToken();
-      setIsLoading(false);
+      try {
+        await refreshToken();
+      } catch (error) {
+        console.error("PrivateRoute Error: ", error);
+      } finally {
+        setIsLoading(false);
+      }
     };
-
     checkAuth();
   }, []);
 
@@ -26,7 +30,7 @@ const PrivateRoute = () => {
     return <Navigate to={"/"} replace />;
   }
 
-  return authUser && token ? <Outlet /> : <Navigate to={"/"} replace />;
+  return <Outlet />;
 };
 
 export default PrivateRoute;

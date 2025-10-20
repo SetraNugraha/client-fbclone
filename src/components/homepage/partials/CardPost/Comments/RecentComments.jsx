@@ -2,16 +2,17 @@ import { CardComment } from "./CardComment";
 import { Link } from "react-router-dom";
 import { BsThreeDots } from "../../../../../assets/icons";
 import { formatDate } from "../../../../../utils/formatDate";
+import { getProfilePicture } from "../../../../../utils/getProfilePicture";
 
 export const RecentComments = ({ user, comment }) => {
-  const userProfileImage = comment.user?.profile_image ? IMAGE_URL + comment.user?.profile_image : "img/profile-default.jpg";
+  const profilePicture = getProfilePicture(comment?.user?.profile_image);
 
   return (
     <div className="flex gap-1 py-2 px-5">
       {/* Profile Image */}
       <div className="w-[35px] h-[35px] mt-[-23px]">
         <Link to={`/profile/${user.id}`} className="ml-10">
-          <img src={userProfileImage} alt="profile-image" className="h-full w-full rounded-full" />
+          <img src={profilePicture} alt="profile-image" className="h-full w-full rounded-full" />
         </Link>
       </div>
       <div className="flex flex-col justify-center items-start gap-1">

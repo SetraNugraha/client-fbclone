@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useAuth } from "../../features/auth/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import Register from "../../pages/Register";
 import { useState } from "react";
 import { InputForm } from "../../elements/InputForm";

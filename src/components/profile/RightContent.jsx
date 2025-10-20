@@ -1,13 +1,13 @@
 /* eslint-disable react/prop-types */
-import { BsGearFill, IoOptionsOutline } from '../../assets/icons'
-import CreatePost from '../homepage/CreatePost'
+import { BsGearFill, IoOptionsOutline } from "../../assets/icons";
+import CreatePost from "../homepage/CreatePost";
 
-export const RightContent = ({ userId }) => {
+export const RightContent = ({ user }) => {
   return (
     <>
       {/* Form Post */}
       <div>
-        <CreatePost userId={userId} />
+        <CreatePost user={user} />
       </div>
 
       {/* Filter Postingan */}
@@ -20,19 +20,13 @@ export const RightContent = ({ userId }) => {
 
           {/* Button */}
           <div className="px-2 py-1 rounded-md flex gap-x-2">
-            <a
-              href="#"
-              className="px-3 py-2 flex gap-x-2 items-center font-semibold bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300"
-            >
+            <a href="#" className="px-3 py-2 flex gap-x-2 items-center font-semibold bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">
               <span>
                 <IoOptionsOutline className="w-[20px] h-[20px]" />
               </span>
               Filter
             </a>
-            <a
-              href="#"
-              className="px-3 py-2 flex gap-x-2 items-center font-semibold bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300"
-            >
+            <a href="#" className="px-3 py-2 flex gap-x-2 items-center font-semibold bg-slate-200 text-slate-700 rounded-md hover:bg-slate-300">
               <span>
                 <BsGearFill className="w-[17px] h-[17px]" />
               </span>
@@ -42,5 +36,5 @@ export const RightContent = ({ userId }) => {
         </div>
       </div>
     </>
-  )
-}
+  );
+};

@@ -16,10 +16,8 @@ import { NavLogo } from "./partials/Navbar/NavLogo";
 import { NavMenu } from "./partials/Navbar/NavMenu";
 import { NavSetting } from "./partials/Navbar/NavSetting";
 import { UserSetting } from "./partials/Navbar/UserSetting";
-import { useAuth } from "../../features/auth/useAuth";
 
-export default function Navbar() {
-  const { authUser } = useAuth();
+export default function Navbar({ authUser }) {
   return (
     <>
       <div className="fixed h-[57px] w-full bg-slate-100 drop-shadow-lg flex justify-between items-center z-10">

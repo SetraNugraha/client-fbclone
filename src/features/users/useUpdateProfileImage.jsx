@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import { useMutation } from 'react-query'
-import { useAuth } from '../auth/useAuth'
+import { useAuth } from "@/hooks/useAuth";
 
 export const useUpdateProfileImage = ({ onSuccess }) => {
   const { authUser, token, axiosJWT } = useAuth()

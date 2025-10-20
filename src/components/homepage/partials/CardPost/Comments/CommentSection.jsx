@@ -1,24 +1,24 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { IoPaperPlaneSharp } from "../../../../../assets/icons";
 import { ProfilePicture } from "../../../../../elements/ProfilePicture";
-import { useAuth } from "../../../../../features/auth/useAuth";
+import { useAuth } from "@/hooks/useAuth";
 import { RecentComments } from "./RecentComments";
-import { usePosts } from "../../../../../features/posts/usePosts";
+import { usePosts } from "@/hooks/usePosts";
 import { LoadingOverlay } from "../../../../../elements/LoadingOverlay";
 
 export const CommentSection = ({ post }) => {
   const { authUser } = useAuth();
   const { createComment } = usePosts();
-  const comments = post.comments;
+  const comments = post?.comments;
   const [bodyComment, setBodyComment] = useState("");
 
   const handleCreateComment = (e) => {
     e.preventDefault();
 
     createComment.mutate(
-      { postId: post.id, body: bodyComment },
+      { postId: post?.id, body: bodyComment },
       {
         onSuccess: () => {
           setBodyComment("");
@@ -36,7 +36,7 @@ export const CommentSection = ({ post }) => {
     <>
       <LoadingOverlay isLoading={createComment.isLoading} />
 
-      {comments.map((comment, index) => {
+      {comments?.map((comment, index) => {
         return <RecentComments key={index} user={comment.user} comment={comment} />;
       })}
 
