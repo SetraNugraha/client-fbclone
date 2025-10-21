@@ -4,13 +4,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { ChildUserSetting } from "./ChildUserSetting";
-import { getProfilePicture } from "../../../../utils/getProfilePicture";
+import { ProfilePicture } from "@/elements/ProfilePicture";
 
 export const UserSetting = ({ authUser }) => {
   const { logout } = useAuth();
   const navigate = useNavigate();
-  const username = authUser.first_name + " " + authUser.surname ?? "unknown";
-  const profilePicture = getProfilePicture(authUser?.profile_image);
 
   const [toggleUserSetting, setToggleUserSetting] = useState(false);
 
@@ -37,13 +35,11 @@ export const UserSetting = ({ authUser }) => {
       {/* User Setting */}
       <li className="flex items-center">
         <button onClick={handleToggleUserSetting}>
-          <img src={profilePicture} alt="profile-image" className="h-[42px] w-[42px] rounded-full border border-slate-300" />
+          <ProfilePicture user={authUser} size={42} />
         </button>
       </li>
       {/* Menu Toggle */}
-      <div className="absolute top-[50px]">
-        {toggleUserSetting && <ChildUserSetting userId={authUser.id} profileImage={profilePicture} username={username} handleLogout={handleLogout} />}
-      </div>
+      <div className="absolute top-[50px]">{toggleUserSetting && <ChildUserSetting authUser={authUser} handleLogout={handleLogout} />}</div>
     </>
   );
 };

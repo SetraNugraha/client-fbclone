@@ -10,12 +10,12 @@ import {
   CgMenuGridO,
   BsPeople,
   GoHomeFill,
-} from "../../assets/icons";
+} from "../assets/icons";
 
-import { NavLogo } from "./partials/Navbar/NavLogo";
-import { NavMenu } from "./partials/Navbar/NavMenu";
-import { NavSetting } from "./partials/Navbar/NavSetting";
-import { UserSetting } from "./partials/Navbar/UserSetting";
+import { NavLogo } from "../components/homepage/partials/Navbar/NavLogo";
+import { NavMenu } from "../components/homepage/partials/Navbar/NavMenu";
+import { NavSetting } from "../components/homepage/partials/Navbar/NavSetting";
+import { UserSetting } from "../components/homepage/partials/Navbar/UserSetting";
 
 export default function Navbar({ authUser }) {
   return (

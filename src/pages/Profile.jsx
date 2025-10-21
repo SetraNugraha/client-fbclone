@@ -1,18 +1,16 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
-import Navbar from "../components/homepage/Navbar";
+import Navbar from "@/elements/Navbar";
 import { HeaderProfile } from "../components/profile/HeaderProfile";
 import { LeftContent } from "../components/profile/LeftContent";
 import { RightContent } from "../components/profile/RightContent";
-import CardPost from "../components/homepage/CardPost";
+import CardPost from "@/elements/CardPost";
 import { useParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
-import { usePosts } from "@/hooks/usePosts";
 import { useUsers } from "@/hooks/useUsers";
 import { LoadingOverlay } from "../elements/LoadingOverlay";
-import { useEffect } from "react";
-import { useUserPosts } from "../hooks/posts";
+import { useUserPosts } from "@/hooks/posts";
 
 export default function Profile() {
   const { authUser } = useAuth();

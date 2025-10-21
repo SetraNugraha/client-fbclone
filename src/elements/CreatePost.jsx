@@ -3,18 +3,18 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { FaVideo, BsFileImage, CgSmileMouthOpen } from "../../assets/icons";
-
+import { FaVideo, BsFileImage, CgSmileMouthOpen } from "../assets/icons";
+import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
-import Modal from "../../elements/Modal";
-import { Addons } from "./partials/CreatePost/Addons";
-import { Header } from "./partials/CreatePost/Header";
-import { usePosts } from "../../features/posts/usePosts";
+import Modal from "./Modal";
+import { Addons } from "../components/homepage/partials/CreatePost/Addons";
+import { Header } from "../components/homepage/partials/CreatePost/Header";
 import { AxiosError } from "axios";
-import { ProfilePicture } from "../../elements/ProfilePicture";
+import { ProfilePicture } from "./ProfilePicture";
+import { useCreatePosts } from "../hooks/posts/useCreatePost";
 
 export default function CreatePost({ user }) {
-  const { createPost } = usePosts();
+  const { mutate: createPost, isLoading } = useCreatePosts();
   const textAreaRef = useRef(null);
 
   const [modalCreatePost, setModalCreatePost] = useState(() => {
@@ -68,7 +68,7 @@ export default function CreatePost({ user }) {
   const handleCreatePost = (e) => {
     e.preventDefault();
 
-    createPost.mutate(payload, {
+    createPost(payload, {
       onSuccess: (data) => {
         setPayload({
           body: "",
@@ -99,7 +99,9 @@ export default function CreatePost({ user }) {
         {/* Profile & Input */}
         <div className="p-2 mx-auto border-b-2 border-gray-300">
           <div className="w-full flex items-center justify-around gap-x-2">
-            <ProfilePicture user={user} size={40} />
+            <Link to={`/profile/${user.id}`}>
+              <ProfilePicture user={user} size={40} />
+            </Link>
             {/* Trigger Modal Create Post */}
             <input
               type="text"
@@ -116,7 +118,7 @@ export default function CreatePost({ user }) {
         {/* Modal Create Post */}
         {modalCreatePost && (
           <Modal>
-            <Modal.Header title="Create Post" disabled={createPost.isLoading} onClick={() => setModalCreatePost(false)} />
+            <Modal.Header title="Create Post" disabled={isLoading} onClick={() => setModalCreatePost(false)} />
             <Modal.Body>
               {/* Body Profile */}
               <Header authUser={user} />
@@ -124,45 +126,47 @@ export default function CreatePost({ user }) {
 
               {/* Body Post */}
               <form onSubmit={handleCreatePost}>
-                <textarea
-                  type="text"
-                  name="body"
-                  id="body"
-                  ref={textAreaRef}
-                  onChange={handleChange}
-                  value={payload.body}
-                  placeholder={`Apa yang Anda pikirkan, ${user.first_name}?`}
-                  className="text-xl pt-3 mt-3 w-full h-[200px] border-none placeholder:text-2xl resize-none focus:border-none focus:outline-none focus:ring-0"
-                />
+                <fieldset disabled={isLoading}>
+                  <textarea
+                    type="text"
+                    name="body"
+                    id="body"
+                    ref={textAreaRef}
+                    onChange={handleChange}
+                    value={payload.body}
+                    placeholder={`Apa yang Anda pikirkan, ${user.first_name}?`}
+                    className="text-xl pt-3 mt-3 w-full h-[200px] border-none placeholder:text-2xl resize-none focus:border-none focus:outline-none focus:ring-0"
+                  />
 
-                {/* End Body Post */}
+                  {/* End Body Post */}
 
-                {/* File Upload Name */}
-                {payload.post_image && (
-                  <div className=" mb-2 ml-1 flex gap-x-2 items-center">
-                    <p className="font-semibold text-xs text-slate-700 bg-slate-300 px-2 py-1 inline-block rounded-md">{payload.post_image.name}</p>
+                  {/* File Upload Name */}
+                  {payload.post_image && (
+                    <div className=" mb-2 ml-1 flex gap-x-2 items-center">
+                      <p className="font-semibold text-xs text-slate-700 bg-slate-300 px-2 py-1 inline-block rounded-md">{payload.post_image.name}</p>
 
-                    {/* Button Remove File Image */}
-                    <button onClick={() => setPayload((prev) => ({ ...prev, post_image: null }))} className="text-red-500 font-semibold">
-                      x
-                    </button>
-                  </div>
-                )}
-                {/* END File Upload Name */}
+                      {/* Button Remove File Image */}
+                      <button onClick={() => setPayload((prev) => ({ ...prev, post_image: null }))} className="text-red-500 font-semibold">
+                        x
+                      </button>
+                    </div>
+                  )}
+                  {/* END File Upload Name */}
 
-                {/* Addons */}
-                <Addons onChange={handleChange} />
-                {/* END Addons */}
+                  {/* Addons */}
+                  <Addons onChange={handleChange} />
+                  {/* END Addons */}
 
-                {/* Footer Button Submit */}
-                <button
-                  disabled={(payload.body.length === 0 && !payload.post_image) || createPost.isLoading}
-                  type="submit"
-                  className="py-1 disabled:cursor-not-allowed disabled:bg-slate-400 bg-blue-500 text-white font-semibold w-full my-3 rounded-lg text-lg hover:bg-opacity-70"
-                >
-                  {createPost.isLoading ? "Please wait .... " : "Post"}
-                </button>
-                {/* End Footer Button Submit */}
+                  {/* Footer Button Submit */}
+                  <button
+                    disabled={payload.body.length === 0 && !payload.post_image}
+                    type="submit"
+                    className="py-1 disabled:cursor-not-allowed disabled:bg-slate-400 bg-blue-500 text-white font-semibold w-full my-3 rounded-lg text-lg hover:bg-opacity-70"
+                  >
+                    {isLoading ? "Please wait .... " : "Post"}
+                  </button>
+                  {/* End Footer Button Submit */}
+                </fieldset>
               </form>
             </Modal.Body>
           </Modal>

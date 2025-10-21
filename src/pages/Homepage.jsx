@@ -1,12 +1,12 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable no-unused-vars */
 import "../index.css";
-import Navbar from "../components/homepage/Navbar";
+import Navbar from "@/elements/Navbar";
 import Leftbar from "../components/homepage/Leftbar";
 import Reels from "../components/homepage/Reels";
-import CreatePost from "../components/homepage/CreatePost";
+import CreatePost from "@/elements/CreatePost";
 import Rightbar from "../components/homepage/Rightbar";
-import CardPost from "../components/homepage/CardPost";
+import CardPost from "../elements/CardPost";
 import { useAuth } from "@/hooks/useAuth";
 import { useAllPosts } from "@/hooks/posts";
 
@@ -36,7 +36,7 @@ export default function Homepage() {
             {postsIsLoading ? (
               <p className=" mt-7 text-center text-slate-400 font-semibold">Loading ...</p>
             ) : (
-              posts.map((post, index) => {
+              posts?.map((post, index) => {
                 const isLastPost = index === posts.length - 1;
                 return <CardPost key={index} author={post.author} post={post} isLastPost={isLastPost} />;
               })

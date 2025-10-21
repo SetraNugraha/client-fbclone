@@ -6,34 +6,25 @@ import { jwtDecode } from "jwt-decode";
 import { useNavigate } from "react-router-dom";
 import { axiosInstance, setupAxiosAuth } from "@/lib/axios";
 import { useMutation } from "react-query";
-import { objectToFormData } from "@/utils/objectToFormData";
 import { getUserAPI } from "@/api/users.api";
-import { fetchUserById } from "@/features/users/useFetchUserById";
+import { registerAPI, loginAPI, logoutAPI } from "@/api/auth.api";
 
 const AuthContext = createContext();
 
 export const AuthContextProvider = ({ children }) => {
+  const navigate = useNavigate();
   const [authUser, setAuthUser] = useState(null);
   const [token, setToken] = useState(null);
   const [expired, setExpired] = useState(null);
-  const navigate = useNavigate();
+  const [isAxiosReady, setIsAxiosReady] = useState(false);
 
   const register = useMutation({
-    mutationFn: async (payload) => {
-      const { ...fieldsRegister } = payload;
-      const formDataRegister = objectToFormData(fieldsRegister);
-
-      const res = await axiosInstance.post("/auth/register", formDataRegister);
-      return res.data;
-    },
+    mutationFn: (payload) => registerAPI(payload),
   });
 
   const login = useMutation({
     mutationKey: ["user"],
-    mutationFn: async (credentials) => {
-      const res = await axiosInstance.post("/auth/login", credentials);
-      return res.data.data;
-    },
+    mutationFn: (credentials) => loginAPI(credentials),
     onSuccess: (data) => {
       const { access_token, user } = data;
 
@@ -47,15 +38,7 @@ export const AuthContextProvider = ({ children }) => {
   });
 
   const logout = useMutation({
-    mutationFn: async () => {
-      const res = await axiosInstance.post("/auth/logout", null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      return res.data;
-    },
+    mutationFn: logoutAPI,
     onSuccess: (data) => {
       alert(data.message);
       setToken(null);
@@ -91,6 +74,9 @@ export const AuthContextProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       setupAxiosAuth(token);
+      setIsAxiosReady(true);
+    } else {
+      setIsAxiosReady(false);
     }
   }, [token]);
 
@@ -131,6 +117,7 @@ export const AuthContextProvider = ({ children }) => {
     register,
     login,
     logout,
+    isAxiosReady,
     refreshToken,
     setAuthUser,
     setToken,

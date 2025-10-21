@@ -12,15 +12,15 @@ export const HeaderPost = ({ author, post }) => {
   const { authUser } = useAuth();
 
   return (
-    <div className="flex justify-between items center px-3 py-2">
+    <div className="flex justify-between items-center p-3">
       {/* Profile */}
-      <div className="flex items-center gap-x-3">
+      <Link to={`/profile/${author?.id}`} className="flex items-center gap-x-3">
         <ProfilePicture user={author} size={35} />
-        <Link to={`/profile/${author?.id}`}>
+        <div>
           <p className="font-semibold text-sm">{author?.username || "unknown"}</p>
           <p className="text-xs">{formatDate(post?.created_at)}</p>
-        </Link>
-      </div>
+        </div>
+      </Link>
 
       {/* Option */}
       <div>

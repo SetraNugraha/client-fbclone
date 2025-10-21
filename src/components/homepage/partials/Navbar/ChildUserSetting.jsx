@@ -3,17 +3,18 @@ import { GrLogout } from "@/assets/icons";
 import { FooterLeftbar } from "../Leftbar/FooterLeftbar";
 import { Link } from "react-router-dom";
 import { menuUserSettings } from "./menuUserSetting";
+import { ProfilePicture } from "@/elements/ProfilePicture";
 
-export const ChildUserSetting = ({ userId, profileImage, username, handleLogout }) => {
+export const ChildUserSetting = ({ authUser, handleLogout }) => {
   return (
     <>
       <div className="bg-white w-[370px] h-[410px] rounded-lg shadow-xl">
         {/* Card Link To Profile Page */}
         <div className="bg-white w-[90%] mx-auto relative top-3 flex flex-col justify-start items-start rounded-lg shadow-xl">
           <div className="w-[95%] mx-auto pt-2 border-b-[1px] border-slate-400 pb-3 hover:bg-slate-100 hover:rounded-lg">
-            <Link to={`/profile/${userId}`} className="flex gap-3 items-center px-2">
-              <img src={profileImage} alt="profile" className="rounded-full w-[42px] h-[42px]" />
-              <p className="font-semibold">{username}</p>
+            <Link to={`/profile/${authUser?.id}`} className="flex gap-3 items-center px-2">
+              <ProfilePicture user={authUser} size={42} />
+              <p className="font-semibold">{authUser?.first_name + " " + authUser?.surname}</p>
             </Link>
           </div>
           <div className="p-3 w-[95%] mx-auto hover:bg-slate-100 hover:rounded-lg">

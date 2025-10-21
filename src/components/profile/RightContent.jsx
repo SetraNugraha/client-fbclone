@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { BsGearFill, IoOptionsOutline } from "../../assets/icons";
-import CreatePost from "../homepage/CreatePost";
+import CreatePost from "@/elements/CreatePost";
 
 export const RightContent = ({ user }) => {
   return (
