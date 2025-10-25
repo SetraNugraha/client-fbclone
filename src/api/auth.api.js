@@ -16,7 +16,7 @@ export const loginAPI = async (credentials) => {
 
 export const logoutAPI = async () => {
   const res = await axiosInstance.post("/auth/logout");
-  return res.data.data;
+  return res.data;
 };
 
 export const refreshTokenAPI = async () => {

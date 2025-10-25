@@ -5,7 +5,7 @@ import { useAuth } from "@/hooks/useAuth";
 export const useUserPosts = (userId) => {
   const { token, isAxiosReady } = useAuth();
   return useQuery({
-    queryKey: ["post", userId],
+    queryKey: ["posts", userId],
     queryFn: ({ queryKey }) => getPostsUserAPI(queryKey[1]),
     enabled: !!userId && !!token && isAxiosReady,
   });

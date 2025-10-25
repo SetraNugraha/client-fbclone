@@ -31,7 +31,7 @@ export const usePosts = ({ userId } = {}) => {
 
       return res.data.data;
     },
-    enabled: !!userId,
+    enabled: !!userId || !!token,
   });
 
   // POST Create new post

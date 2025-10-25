@@ -3,7 +3,7 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
 import { BsChat, PiShareFat, HiThumbUp } from "../assets/icons";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { CommentSection } from "../components/homepage/partials/CardPost/Comments/CommentSection";
 import { HeaderPost } from "../components/homepage/partials/CardPost/HeaderPost";
 import { useAuth } from "@/hooks/useAuth";
@@ -44,7 +44,7 @@ export default function CardPost({ author, post, isLastPost }) {
           }`}
         >
           {/* Like Button */}
-          <LikeButton postId={post?.id} userId={authUser.id} />
+          <LikeButton postId={post?.id} isLike={post?.likes?.some((l) => l.user_id === authUser.id) || false} />
 
           {/* Comment Button */}
           <ButtonActionPost Icon={BsChat} title={"Comment"} onClick={() => setShowInputComment(showInputComment === post?.id ? null : post?.id)} />

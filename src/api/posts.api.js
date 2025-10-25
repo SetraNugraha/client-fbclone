@@ -3,7 +3,7 @@ import { objectToFormData } from "@/utils/objectToFormData";
 
 export const getPostsAPI = async () => {
   const res = await axiosInstance.get("/post/all");
-  return res.data.data;
+  return res.data.data || [];
 };
 
 export const getPostsUserAPI = async (userId) => {

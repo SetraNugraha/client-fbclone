@@ -1,23 +1,23 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable react/prop-types */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { IoPaperPlaneSharp } from "../../../../../assets/icons";
 import { ProfilePicture } from "../../../../../elements/ProfilePicture";
 import { useAuth } from "@/hooks/useAuth";
 import { RecentComments } from "./RecentComments";
-import { usePosts } from "@/hooks/usePosts";
 import { LoadingOverlay } from "../../../../../elements/LoadingOverlay";
+import { useCreateComment } from "../../../../../hooks/comments";
 
 export const CommentSection = ({ post }) => {
   const { authUser } = useAuth();
-  const { createComment } = usePosts();
+  const { mutate: createComment } = useCreateComment();
   const comments = post?.comments;
   const [bodyComment, setBodyComment] = useState("");
 
   const handleCreateComment = (e) => {
     e.preventDefault();
 
-    createComment.mutate(
+    createComment(
       { postId: post?.id, body: bodyComment },
       {
         onSuccess: () => {

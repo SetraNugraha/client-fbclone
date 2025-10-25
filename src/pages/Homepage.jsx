@@ -35,6 +35,8 @@ export default function Homepage() {
             {/* Postingan */}
             {postsIsLoading ? (
               <p className=" mt-7 text-center text-slate-400 font-semibold">Loading ...</p>
+            ) : !posts || posts.length === 0 ? (
+              <p className=" mt-7 text-center text-slate-400 font-semibold">Posts not found.</p>
             ) : (
               posts?.map((post, index) => {
                 const isLastPost = index === posts.length - 1;

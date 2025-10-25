@@ -6,7 +6,9 @@ export const useCreatePosts = () => {
   return useMutation({
     mutationKey: ["posts"],
     mutationFn: (payload) => createPostAPI(payload),
-    onSuccess: (newPost) => queryClient.setQueryData(["posts"], (oldPosts = []) => [newPost, ...oldPosts]),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["posts"] });
+    },
     onError: (error) => {
       console.log("useCreatePosts mutation error: ", error);
     },
